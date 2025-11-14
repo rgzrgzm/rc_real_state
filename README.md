@@ -8,7 +8,7 @@ A modern, full-stack real estate property management application built with Reac
 ![Responsive](https://img.shields.io/badge/Design-Responsive-orange)
 
 ## 🚀 Live Demo
-[Coming Soon - Deploy to Vercel/Netlify]
+...
 
 ## 📋 Features
 
@@ -53,23 +53,31 @@ A modern, full-stack real estate property management application built with Reac
 - Responsive design principles
 
 ## 📸 Screenshots
+...
 <!-- ![Dashboard](screenshots/dashboard.png) -->
 <!-- ![Property Form](screenshots/property-form.png) -->
 <!-- ![Search Interface](screenshots/search.png) -->
 
-## 🏗️ Project Architecture
-src/
-├── components/ # Reusable UI components
-│ ├── PropertyForm.jsx # Add/edit property form
-│ ├── PropertyCard.jsx # Property display component
-│ └── SearchFilters.jsx # Advanced search interface
-├── hooks/ # Custom React hooks
-│ ├── useSupabase.js # Supabase client & configuration
-│ └── useAuth.js # Authentication logic
-├── styles/ # Global styles & Tailwind config
-└── App.jsx # Main application component
+## 🏗️ Project Structure
+
+| Directory | Purpose | Key Files |
+|-----------|---------|-----------|
+| `src/components/` | Reusable UI components | `PropertyForm.jsx`, `PropertyCard.jsx`, `SearchFilters.jsx` |
+| `src/hooks/` | Custom React hooks | `useSupabase.js`, `useAuth.js` |
+| `src/styles/` | Global styles & CSS | `globals.css` |
+| Root | Main application files | `App.jsx`, `index.js` |
+
+### Component Responsibilities:
+- **PropertyForm**: Add/edit properties with validation and real-time saving  
+- **PropertyCard**: Display property details with responsive design  
+- **SearchFilters**: Filter by price, location, bedrooms, etc.  
+- **useSupabase**: Database operations & real-time events  
+- **useAuth**: Auth flow & session handling
+
+
 
 👨‍💻 Author
+
 rgzrgzm
 
 GitHub: @rgzrgzm
