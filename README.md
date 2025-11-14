@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# 🏠 RC Real Estate - Property Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, full-stack real estate property management application built with React.js and Supabase. Designed for real estate agencies to efficiently manage property listings, search inventory, and export data.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-19.2.0-blue)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-green)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Styling-purple)
+![Responsive](https://img.shields.io/badge/Design-Responsive-orange)
 
-In the project directory, you can run:
+## 🚀 Live Demo
+[Coming Soon - Deploy to Vercel/Netlify]
 
-### `npm start`
+## 📋 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🔐 Authentication & Security
+- **User Authentication** with Supabase Auth
+- **Row Level Security** (RLS) for data protection
+- **Role-based access control**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🏢 Property Management
+- **Add New Properties** with detailed information (price, location, bedrooms, etc.)
+- **Advanced Search & Filtering** by location, price range, property type, and features
+- **Real-time Updates** with Supabase subscriptions
+- **Property Status Tracking** (Available, Reserved, Sold/Rented)
 
-### `npm test`
+### 📊 Data Management
+- **CSV Export** for all property data
+- **Responsive Design** works on desktop and mobile
+- **Glassmorphism UI** with modern design patterns
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🛠️ Technical Features
+- **Real-time Database** with Supabase PostgreSQL
+- **Optimized Performance** with proper indexing
+- **Error Handling** and user feedback
+- **Environment Configuration** for secure deployment
 
-### `npm run build`
+## 🛠️ Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Frontend:**
+- React.js 19.2.0
+- TailwindCSS for styling
+- Context API for state management
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Backend & Database:**
+- Supabase (PostgreSQL)
+- Row Level Security (RLS)
+- Real-time subscriptions
+- File storage ready
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Development:**
+- Git Flow for version control
+- Environment variables configuration
+- Responsive design principles
 
-### `npm run eject`
+## 📸 Screenshots
+<!-- ![Dashboard](screenshots/dashboard.png) -->
+<!-- ![Property Form](screenshots/property-form.png) -->
+<!-- ![Search Interface](screenshots/search.png) -->
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🏗️ Project Architecture
+src/
+├── components/ # Reusable UI components
+│ ├── PropertyForm.jsx # Add/edit property form
+│ ├── PropertyCard.jsx # Property display component
+│ └── SearchFilters.jsx # Advanced search interface
+├── hooks/ # Custom React hooks
+│ ├── useSupabase.js # Supabase client & configuration
+│ └── useAuth.js # Authentication logic
+├── styles/ # Global styles & Tailwind config
+└── App.jsx # Main application component
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+👨‍💻 Author
+rgzrgzm
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+GitHub: @rgzrgzm
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+LinkedIn: ...
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Portfolio: ...
