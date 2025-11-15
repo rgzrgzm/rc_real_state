@@ -18,11 +18,10 @@ export const useAuth = () => {
         setUser(session?.user ?? null)
         setLoading(false)
         
-        if (event === 'SIGNED_IN') {
-          console.log('✅ User signed in:', session.user.email)
-        } else if (event === 'SIGNED_OUT') {
-          console.log('🚪 User signed out')
-        }
+        // if (event === 'SIGNED_IN') {
+        // } else if (event === 'SIGNED_OUT') {
+        //   console.log('🚪 User signed out')
+        // }
       }
     )
 

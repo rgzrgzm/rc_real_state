@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import PropertyForm from "./components/PropertyForm";
 import SearchFilters from "./components/SearchFilters";
 import PropertyCard from "./components/PropertyCard";
-import { supabase } from './hooks/useSupabase';  // Add this import
+import { supabase } from "./hooks/useSupabase"; // Add this import
 import Login from "./components/Login";
 import { useAuth } from "./hooks/useAuth";
 
 function App() {
-  const { user, loading: authLoading, signOut } = useAuth();  // Use useAuth instead
-  
+  const { user, loading: authLoading, signOut } = useAuth(); // Use useAuth instead
+
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,9 +52,107 @@ function App() {
     }
   };
 
+  // Image upload utility functions
+  const uploadPropertyImages = async (propertyId, images, userId) => {
+    try {
+
+      const uploadedImages = [];
+
+      for (const imageData of images) {
+        try {
+          const imageUrl = await uploadSingleImage(
+            propertyId,
+            imageData.file,
+            userId
+          );
+          uploadedImages.push({
+            url: imageUrl,
+            name: imageData.file.name,
+            size: imageData.file.size,
+            type: imageData.file.type,
+          });
+        } catch (error) {
+          console.error("Failed to upload image:", imageData.file.name, error);
+          // Continue with other images even if one fails
+        }
+      }
+
+      return uploadedImages;
+    } catch (error) {
+      console.error("Error in uploadPropertyImages:", error);
+      throw error;
+    }
+  };
+
+  const uploadSingleImage = async (propertyId, imageFile, userId) => {
+    // Create unique file name to avoid conflicts
+    const fileExt = imageFile.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+    const filePath = `${userId}/${propertyId}/${fileName}`;
+
+
+    const { data, error } = await supabase.storage
+      .from("images")
+      .upload(filePath, imageFile, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) {
+      console.error("Error uploading image:", error);
+      throw error;
+    }
+
+    // Get public URL
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("images").getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
+  const deletePropertyImages = async (propertyId, userId) => {
+    try {
+      // List all files in the property folder
+      const { data: files, error } = await supabase.storage
+        .from("images")
+        .list(`${userId}/${propertyId}`);
+
+      if (error) {
+        console.error("Error listing files:", error);
+        return;
+      }
+
+      if (files && files.length > 0) {
+        // Delete all files
+        const filePaths = files.map(
+          (file) => `${userId}/${propertyId}/${file.name}`
+        );
+
+        const { error: deleteError } = await supabase.storage
+          .from("images")
+          .remove(filePaths);
+
+        if (deleteError) {
+          console.error("Error deleting files:", deleteError);
+        } else {
+          console.log("✅ Successfully deleted images");
+        }
+      }
+    } catch (error) {
+      console.error("Error in deletePropertyImages:", error);
+    }
+  };
+
   const handleAddProperty = async (propertyData) => {
     try {
       setLoading(true);
+
+      // Extract images from propertyData
+      const { images, ...propertyInfo } = propertyData;
+
       const { data, error } = await supabase
         .from("properties")
         .insert([
@@ -63,19 +161,120 @@ function App() {
             price: parseFloat(propertyData.price),
             bedrooms: parseFloat(propertyData.bedrooms),
             bathrooms: parseFloat(propertyData.bathrooms),
-            user_id: user.id,  // Now using real user ID
+            user_id: user.id, // Now using real user ID
             created_at: new Date().toISOString(),
+            images: [],
           },
         ])
         .select();
 
       if (error) throw error;
 
+      const newPropertyId = data[0].id;
+      let uploadedImages = [];
+
+      if (images && images.length > 0) {
+        uploadedImages = await uploadPropertyImages(
+          newPropertyId,
+          images,
+          user.id
+        );
+
+        // Update property with image URLs
+        const { error: updateError } = await supabase
+          .from("properties")
+          .update({ images: uploadedImages })
+          .eq("id", newPropertyId);
+
+        if (updateError) {
+          console.error("Error updating property with images:", updateError);
+        }
+      }
+
       showMessage("¡Propiedad guardada exitosamente!", "success");
       fetchProperties();
     } catch (error) {
       console.error("Error adding property:", error);
       showMessage(`Error al guardar: ${error.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateProperty = async (propertyId, updatedData) => {
+    try {
+      setLoading(true);
+
+      // Extract images from updatedData (they're just metadata for now)
+      const { images, ...propertyData } = updatedData;
+
+      let uploadedImages = [];
+
+      // TODO: Handle image uploads to Supabase Storage here
+      if (images && images.length > 0) {
+        uploadedImages = await uploadPropertyImages(
+          propertyId,
+          images,
+          user.id
+        );
+      }
+
+      // Get existing images and merge with new ones
+      const { data: existingProperty } = await supabase
+        .from("properties")
+        .select("images")
+        .eq("id", propertyId)
+        .single();
+
+      const allImages = [
+        ...(existingProperty?.images || []),
+        ...uploadedImages,
+      ];
+
+      const { data, error } = await supabase
+        .from("properties")
+        .update({
+          ...propertyData,
+          price: parseFloat(propertyData.price),
+          bedrooms: parseFloat(propertyData.bedrooms),
+          bathrooms: parseFloat(propertyData.bathrooms),
+          images: allImages, // Up
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", propertyId)
+        .eq("user_id", user.id) // Security: only update own properties
+        .select();
+
+      if (error) throw error;
+
+      showMessage("✅ Propiedad actualizada exitosamente!", "success");
+      fetchProperties(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating property:", error);
+      showMessage(`Error al actualizar: ${error.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteProperty = async (propertyId) => {
+    try {
+      setLoading(true);
+      await deletePropertyImages(propertyId, user.id);
+      
+      const { error } = await supabase
+        .from("properties")
+        .delete()
+        .eq("id", propertyId)
+        .eq("user_id", user.id); // Security: only delete own properties
+
+      if (error) throw error;
+
+      showMessage("✅ Propiedad eliminada exitosamente!", "success");
+      fetchProperties(); // Refresh the list
+    } catch (error) {
+      console.error("Error deleting property:", error);
+      showMessage(`Error al eliminar: ${error.message}`, "error");
     } finally {
       setLoading(false);
     }
@@ -133,7 +332,16 @@ function App() {
     }
 
     const headers = [
-      "ID", "Nombre", "Tipo", "Ubicacion", "Precio", "Recamaras", "Banos", "Estado", "Notas", "FechaCreacion",
+      "ID",
+      "Nombre",
+      "Tipo",
+      "Ubicacion",
+      "Precio",
+      "Recamaras",
+      "Banos",
+      "Estado",
+      "Notas",
+      "FechaCreacion",
     ];
 
     const csvRows = properties.map((property) =>
@@ -173,10 +381,14 @@ function App() {
 
   const getMessageClass = (type) => {
     switch (type) {
-      case "success": return "bg-green-600";
-      case "error": return "bg-red-600";
-      case "info": return "bg-blue-600";
-      default: return "bg-gray-700";
+      case "success":
+        return "bg-green-600";
+      case "error":
+        return "bg-red-600";
+      case "info":
+        return "bg-blue-600";
+      default:
+        return "bg-gray-700";
     }
   };
 
@@ -196,7 +408,7 @@ function App() {
     // You'll need to create and import the Login component
     return <Login />;
   }
-  console.log('USER', user)
+  
   // Your existing UI but with auth header
   return (
     <div className="min-h-screen bg-gray-900">
@@ -206,9 +418,11 @@ function App() {
           <div className="flex justify-between items-center py-4">
             <div>
               <h1 className="text-2xl font-bold text-white">RC Real Estate</h1>
-              <p className="text-gray-400 text-sm">Property Management System</p>
+              <p className="text-gray-400 text-sm">
+                Property Management System
+              </p>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="text-right">
                 <p className="text-sm text-gray-300">Welcome back</p>
@@ -228,7 +442,11 @@ function App() {
       {/* Your existing property management UI */}
       <div className="p-4 md:p-8">
         {message.text && (
-          <div className={`p-3 rounded-lg text-center font-semibold mb-4 transition-opacity duration-300 ${getMessageClass(message.type)}`}>
+          <div
+            className={`p-3 rounded-lg text-center font-semibold mb-4 transition-opacity duration-300 ${getMessageClass(
+              message.type
+            )}`}
+          >
             {message.text}
           </div>
         )}
@@ -252,7 +470,7 @@ function App() {
                   <span className="sm:hidden">Buscar</span>
                 </div>
               </button>
-             
+
               <button
                 className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   activeTab === "add"
@@ -273,7 +491,10 @@ function App() {
             <div className="p-8 sm:p-6">
               {activeTab === "add" && (
                 <div className="animate-fade-in">
-                  <PropertyForm onSubmit={handleAddProperty} loading={loading} />
+                  <PropertyForm
+                    onSubmit={handleAddProperty}
+                    loading={loading}
+                  />
                 </div>
               )}
               {activeTab === "search" && (
@@ -310,7 +531,13 @@ function App() {
                 </p>
               ) : (
                 filteredProperties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
+                  <PropertyCard
+                    key={property.id}
+                    property={property}
+                    user={user}
+                    onUpdate={handleUpdateProperty}
+                    onDelete={handleDeleteProperty}
+                  />
                 ))
               )}
             </div>
