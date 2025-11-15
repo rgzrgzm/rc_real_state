@@ -7,7 +7,7 @@ const SearchFilters = ({
   onExport,
   properties = [],
   filteredProperties = [],
-  isLogged
+  isLogged,
 }) => {
   const handleChange = (e) => {
     onFilterChange({
@@ -17,9 +17,7 @@ const SearchFilters = ({
   };
 
   return (
-    <div
-    // className="glass-panel rounded-2xl p-8 backdrop-blur-lg border border-white/10 shadow-2xl"
-    >
+    <div>
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-pink-600 mb-4">
           <span className="text-xl">🔍</span>

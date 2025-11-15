@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -10,13 +10,15 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
     bedrooms: property.bedrooms,
     bathrooms: property.bathrooms,
     status: property.status,
-    notes: property.notes || '',
+    notes: property.notes || "",
   });
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const typeColor = property.type === 'Venta' ? 'bg-green-700' : 'bg-blue-700';
-  const priceFormatted = `$${parseFloat(property.price).toLocaleString('es-MX')}`;
+  const typeColor = property.type === "Venta" ? "bg-green-700" : "bg-blue-700";
+  const priceFormatted = `$${parseFloat(property.price).toLocaleString(
+    "es-MX"
+  )}`;
 
   const handleEditClick = () => {
     if (user.id === property.user_id) {
@@ -29,7 +31,7 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
         status: property.status,
-        notes: property.notes || '',
+        notes: property.notes || "",
       });
       // If property has existing images, you could load them here
       setImages([]);
@@ -38,31 +40,32 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    
+
     // Validate file types
-    const validFiles = files.filter(file => 
-      file.type.startsWith('image/') && 
-      file.size <= 5 * 1024 * 1024 // 5MB limit
+    const validFiles = files.filter(
+      (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024 // 5MB limit
     );
 
     if (validFiles.length !== files.length) {
-      alert('Algunos archivos no son válidos. Solo se permiten imágenes menores a 5MB.');
+      alert(
+        "Algunos archivos no son válidos. Solo se permiten imágenes menores a 5MB."
+      );
     }
 
     // Create preview URLs
-    const newImages = validFiles.map(file => ({
+    const newImages = validFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
       name: file.name,
-      size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
+      size: (file.size / 1024 / 1024).toFixed(2) + " MB",
     }));
 
-    setImages(prev => [...prev, ...newImages]);
+    setImages((prev) => [...prev, ...newImages]);
   };
 
   const removeImage = (index) => {
     URL.revokeObjectURL(images[index].preview);
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSave = async () => {
@@ -70,22 +73,22 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
     try {
       const updateData = {
         ...editData,
-        images: images.map(img => ({
+        images: images.map((img) => ({
           name: img.file.name,
           size: img.file.size,
-          type: img.file.type
+          type: img.file.type,
           // In real app: upload files and store URLs
-        }))
+        })),
       };
-      
+
       await onUpdate(property.id, updateData);
       setIsEditing(false);
-      
+
       // Clean up image previews
-      images.forEach(img => URL.revokeObjectURL(img.preview));
+      images.forEach((img) => URL.revokeObjectURL(img.preview));
       setImages([]);
     } catch (error) {
-      console.error('Error updating property:', error);
+      console.error("Error updating property:", error);
     } finally {
       setLoading(false);
     }
@@ -101,11 +104,11 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
       bedrooms: property.bedrooms,
       bathrooms: property.bathrooms,
       status: property.status,
-      notes: property.notes || '',
+      notes: property.notes || "",
     });
-    
+
     // Clean up image previews
-    images.forEach(img => URL.revokeObjectURL(img.preview));
+    images.forEach((img) => URL.revokeObjectURL(img.preview));
     setImages([]);
   };
 
@@ -117,12 +120,14 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
   };
 
   const handleDelete = async () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta propiedad?')) {
+    if (
+      window.confirm("¿Estás seguro de que quieres eliminar esta propiedad?")
+    ) {
       setLoading(true);
       try {
         await onDelete(property.id);
       } catch (error) {
-        console.error('Error deleting property:', error);
+        console.error("Error deleting property:", error);
       } finally {
         setLoading(false);
       }
@@ -154,7 +159,7 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
             <label className="block text-sm font-semibold text-gray-300 mb-2">
               📸 Agregar Imágenes
             </label>
-            
+
             {/* File Input */}
             <div className="border-2 border-dashed border-white/20 rounded-xl p-4 text-center hover:border-green-400/50 transition-colors duration-300">
               <input
@@ -177,7 +182,10 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
                   PNG, JPG, WEBP hasta 5MB
                 </p>
                 <p className="text-green-400 text-xs mt-1">
-                  {images.length} {images.length === 1 ? 'imagen seleccionada' : 'imágenes seleccionadas'}
+                  {images.length}{" "}
+                  {images.length === 1
+                    ? "imagen seleccionada"
+                    : "imágenes seleccionadas"}
                 </p>
               </label>
             </div>
@@ -185,7 +193,9 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
             {/* Image Previews */}
             {images.length > 0 && (
               <div className="mt-3">
-                <h4 className="text-sm font-semibold text-gray-300 mb-2">Nuevas imágenes:</h4>
+                <h4 className="text-sm font-semibold text-gray-300 mb-2">
+                  Nuevas imágenes:
+                </h4>
                 <div className="grid grid-cols-2 gap-2">
                   {images.map((image, index) => (
                     <div key={index} className="relative group/image">
@@ -200,8 +210,18 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
                           onClick={() => removeImage(index)}
                           className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full transition-colors"
                         >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -266,7 +286,9 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
               💰 Precio (MXN)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">$</span>
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
+                $
+              </span>
               <input
                 type="number"
                 name="price"
@@ -329,7 +351,7 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
               disabled={loading}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg disabled:opacity-50 transition-colors"
             >
-              {loading ? 'Guardando...' : 'Guardar'}
+              {loading ? "Guardando..." : "Guardar"}
             </button>
             <button
               onClick={handleCancel}
@@ -352,75 +374,79 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
     );
   }
 
- // Normal View (Read-only)
-return (
-  <div 
-    className={`card p-4 property-card transition-all duration-300 ${
-      user?.id === property.user_id 
-        ? "cursor-pointer hover:border-blue-500/50 hover:scale-[1.02]" 
-        : ""
-    }`}
-    onClick={user?.id === property.user_id ? handleEditClick : undefined}
-  >
-    <div className="flex justify-between items-start">
-      <div className="flex-1">
-        <h3 className="text-xl font-bold text-secondary">{property.name}</h3>
-        <p className="text-sm text-gray-400 mb-2">{property.location}</p>
-      </div>
-      <div className="flex items-center space-x-2">
-        {user?.id === property.user_id && (
-          <span className="text-xs text-blue-400 bg-blue-400/20 px-2 py-1 rounded-full">
-            Tu propiedad
-          </span>
-        )}
-        <span className={`${typeColor} text-white text-xs font-semibold px-3 py-1 rounded-full`}>
-          {property.type.toUpperCase()}
-        </span>
-      </div>
-    </div>
-    
-    <p className="text-2xl font-extrabold text-white my-1">{priceFormatted} MXN</p>
-    
-    <div className="flex text-sm space-x-4 mt-2 border-t border-gray-700 pt-2">
-      <p title="Recámaras">🛌 {property.bedrooms} Rec.</p>
-      <p title="Baños">🚽 {property.bathrooms} Baños</p>
-      <p title="Estado">⭐ {property.status}</p>
-    </div>
-    
-    <p className="text-xs text-gray-500 mt-2 italic">
-      {property.notes || 'Sin notas adicionales.'}
-    </p>
-
-    {/* IMAGES DISPLAY - ADD THIS SECTION */}
-    {property.images && property.images.length > 0 && (
-      <div className="mt-3">
-        <div className="flex space-x-2 overflow-x-auto pb-2">
-          {property.images.slice(0, 3).map((image, index) => (
-            <img
-              key={index}
-              src={image.url}
-              alt={`Imagen ${index + 1} de ${property.name}`}
-              className="w-16 h-16 object-cover rounded-lg border border-gray-600"
-            />
-          ))}
-          {property.images.length > 3 && (
-            <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center text-xs text-gray-400">
-              +{property.images.length - 3}
-            </div>
+  // Normal View (Read-only)
+  return (
+    <div
+      className={`card p-4 property-card transition-all duration-300 ${
+        user?.id === property.user_id
+          ? "cursor-pointer hover:border-blue-500/50 hover:scale-[1.02]"
+          : ""
+      }`}
+      onClick={user?.id === property.user_id ? handleEditClick : undefined}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <h3 className="text-xl font-bold text-secondary">{property.name}</h3>
+          <p className="text-sm text-gray-400 mb-2">{property.location}</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          {user?.id === property.user_id && (
+            <span className="text-xs text-blue-400 bg-blue-400/20 px-2 py-1 rounded-full">
+              Tu propiedad
+            </span>
           )}
+          <span
+            className={`${typeColor} text-white text-xs font-semibold px-3 py-1 rounded-full`}
+          >
+            {property.type.toUpperCase()}
+          </span>
         </div>
       </div>
-    )}
 
-    {user?.id === property.user_id && (
-      <div className="mt-3 pt-3 border-t border-gray-700">
-        <p className="text-xs text-blue-400 text-center">
-          👆 Haz clic para editar
-        </p>
+      <p className="text-2xl font-extrabold text-white my-1">
+        {priceFormatted} MXN
+      </p>
+
+      <div className="flex text-sm space-x-4 mt-2 border-t border-gray-700 pt-2">
+        <p title="Recámaras">🛌 {property.bedrooms} Rec.</p>
+        <p title="Baños">🚽 {property.bathrooms} Baños</p>
+        <p title="Estado">⭐ {property.status}</p>
       </div>
-    )}
-  </div>
-);
+
+      <p className="text-xs text-gray-500 mt-2 italic">
+        {property.notes || "Sin notas adicionales."}
+      </p>
+
+      {/* IMAGES DISPLAY - ADD THIS SECTION */}
+      {property.images && property.images.length > 0 && (
+        <div className="mt-3">
+          <div className="flex space-x-2 overflow-x-auto pb-2">
+            {property.images.slice(0, 3).map((image, index) => (
+              <img
+                key={index}
+                src={image.url}
+                alt={`Imagen ${index + 1} de ${property.name}`}
+                className="w-16 h-16 object-cover rounded-lg border border-gray-600"
+              />
+            ))}
+            {property.images.length > 3 && (
+              <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                +{property.images.length - 3}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {user?.id === property.user_id && (
+        <div className="mt-3 pt-3 border-t border-gray-700">
+          <p className="text-xs text-blue-400 text-center">
+            👆 Haz clic para editar
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default PropertyCard;
