@@ -356,11 +356,11 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
 return (
   <div 
     className={`card p-4 property-card transition-all duration-300 ${
-      user.id === property.user_id 
+      user?.id === property.user_id 
         ? "cursor-pointer hover:border-blue-500/50 hover:scale-[1.02]" 
         : ""
     }`}
-    onClick={user.id === property.user_id ? handleEditClick : undefined}
+    onClick={user?.id === property.user_id ? handleEditClick : undefined}
   >
     <div className="flex justify-between items-start">
       <div className="flex-1">
@@ -368,7 +368,7 @@ return (
         <p className="text-sm text-gray-400 mb-2">{property.location}</p>
       </div>
       <div className="flex items-center space-x-2">
-        {user.id === property.user_id && (
+        {user?.id === property.user_id && (
           <span className="text-xs text-blue-400 bg-blue-400/20 px-2 py-1 rounded-full">
             Tu propiedad
           </span>
@@ -412,7 +412,7 @@ return (
       </div>
     )}
 
-    {user.id === property.user_id && (
+    {user?.id === property.user_id && (
       <div className="mt-3 pt-3 border-t border-gray-700">
         <p className="text-xs text-blue-400 text-center">
           👆 Haz clic para editar

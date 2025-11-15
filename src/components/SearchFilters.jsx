@@ -1,22 +1,23 @@
-import React from 'react'
+import React from "react";
 
-const SearchFilters = ({ 
-  filters, 
-  onFilterChange, 
-  onSearch, 
+const SearchFilters = ({
+  filters,
+  onFilterChange,
+  onSearch,
   onExport,
-  properties = [], 
-  filteredProperties = [] 
+  properties = [],
+  filteredProperties = [],
+  isLogged
 }) => {
   const handleChange = (e) => {
     onFilterChange({
       ...filters,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
-    <div 
+    <div
     // className="glass-panel rounded-2xl p-8 backdrop-blur-lg border border-white/10 shadow-2xl"
     >
       <div className="text-center mb-8">
@@ -26,13 +27,18 @@ const SearchFilters = ({
         <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-pink-500 bg-clip-text text-transparent">
           Búsqueda Inteligente
         </h2>
-        <p className="text-gray-400 text-sm mt-2">Filtra propiedades con precisión</p>
+        <p className="text-gray-400 text-sm mt-2">
+          Filtra propiedades con precisión
+        </p>
       </div>
 
       <div className="space-y-6">
         {/* Transaction Type */}
         <div className="group">
-          <label htmlFor="searchType" className="block text-sm font-semibold text-gray-300 mb-3 group-focus-within:text-indigo-400 transition-colors">
+          <label
+            htmlFor="searchType"
+            className="block text-sm font-semibold text-gray-300 mb-3 group-focus-within:text-indigo-400 transition-colors"
+          >
             📊 Tipo de Transacción
           </label>
           <select
@@ -44,15 +50,24 @@ const SearchFilters = ({
                      focus:bg-white/10 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/20 
                      transition-all duration-300 backdrop-blur-sm appearance-none"
           >
-            <option value="" className="bg-gray-800">🌐 Cualquiera</option>
-            <option value="Venta" className="bg-gray-800">🏠 Venta</option>
-            <option value="Renta" className="bg-gray-800">🔑 Renta</option>
+            <option value="" className="bg-gray-800">
+              🌐 Cualquiera
+            </option>
+            <option value="Venta" className="bg-gray-800">
+              🏠 Venta
+            </option>
+            <option value="Renta" className="bg-gray-800">
+              🔑 Renta
+            </option>
           </select>
         </div>
-        
+
         {/* Location Search */}
         <div className="group">
-          <label htmlFor="searchLocation" className="block text-sm font-semibold text-gray-300 mb-3 group-focus-within:text-purple-400 transition-colors">
+          <label
+            htmlFor="searchLocation"
+            className="block text-sm font-semibold text-gray-300 mb-3 group-focus-within:text-purple-400 transition-colors"
+          >
             📍 Ubicación/Modelo
           </label>
           <div className="relative">
@@ -81,7 +96,9 @@ const SearchFilters = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="group">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">$</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
+                  $
+                </span>
                 <input
                   type="number"
                   id="searchMinPrice"
@@ -98,7 +115,9 @@ const SearchFilters = ({
             </div>
             <div className="group">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">$</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
+                  $
+                </span>
                 <input
                   type="number"
                   id="searchMaxPrice"
@@ -162,7 +181,7 @@ const SearchFilters = ({
             </div>
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="space-y-4 pt-4">
           <button
@@ -178,20 +197,22 @@ const SearchFilters = ({
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
-          
-          <button
-            onClick={onExport}
-            className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 
+
+          {isLogged && (
+            <button
+              onClick={onExport}
+              className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 
                      hover:from-emerald-500 hover:to-cyan-500 active:scale-95
                      text-white font-bold text-lg shadow-lg hover:shadow-emerald-500/25
                      transition-all duration-300 transform hover:scale-[1.02] group relative overflow-hidden"
-          >
-            <span className="relative z-10 flex items-center justify-center">
-              <span className="mr-2">📊</span>
-              Exportar a CSV
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </button>
+            >
+              <span className="relative z-10 flex items-center justify-center">
+                <span className="mr-2">📊</span>
+                Exportar a Excel
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+          )}
         </div>
 
         {/* Quick Stats */}
@@ -213,7 +234,7 @@ const SearchFilters = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SearchFilters
+export default SearchFilters;

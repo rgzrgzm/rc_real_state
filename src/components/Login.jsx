@@ -1,33 +1,34 @@
-import React, { useState } from 'react'
-import { useAuth } from '../hooks/useAuth'
+import React, { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { signIn, signUp, loading } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [message, setMessage] = useState('')
-
+  const { signIn, signUp, loading } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setMessage('')
-    
+    e.preventDefault();
+    setMessage("");
+
     try {
       if (isSignUp) {
-        const { data } = await signUp(email, password)
+        const { data } = await signUp(email, password);
         if (data.user && !data.session) {
-          setMessage('✅ Check your email for verification link!')
+          setMessage("✅ Check your email for verification link!");
         } else {
-          setMessage('✅ Account created successfully!')
+          setMessage("✅ Account created successfully!");
         }
       } else {
-        await signIn(email, password)
-        setMessage('✅ Successfully signed in!')
+        await signIn(email, password);
+        setMessage("✅ Successfully signed in!");
       }
     } catch (error) {
-      setMessage(`❌ Error: ${error.message}`)
+      setMessage(`❌ Error: ${error.message}`);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -37,17 +38,20 @@ const Login = () => {
             <span className="text-white text-lg">🏠</span>
           </div>
           <h2 className="text-center text-3xl font-extrabold text-white">
-            {isSignUp ? 'Create Account' : 'Sign In'}
+            {isSignUp ? "Create Account" : "Sign In"}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
             RC Real Estate Management
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 Email address
               </label>
               <input
@@ -61,9 +65,12 @@ const Login = () => {
                 placeholder="Enter your email"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 Password
               </label>
               <input
@@ -81,9 +88,13 @@ const Login = () => {
           </div>
 
           {message && (
-            <div className={`p-3 rounded-lg text-center ${
-              message.includes('❌') ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
-            }`}>
+            <div
+              className={`p-3 rounded-lg text-center ${
+                message.includes("❌")
+                  ? "bg-red-500/20 text-red-400"
+                  : "bg-green-500/20 text-green-400"
+              }`}
+            >
               {message}
             </div>
           )}
@@ -94,7 +105,7 @@ const Login = () => {
               disabled={loading}
               className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
-              {loading ? 'Loading...' : (isSignUp ? 'Create Account' : 'Sign In')}
+              {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
             </button>
           </div>
 
@@ -104,13 +115,38 @@ const Login = () => {
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+              {isSignUp
+                ? "Already have an account? Sign in"
+                : "Don't have an account? Sign up"}
+            </button>
+          </div>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 transition-colors duration-300 group mx-auto"
+            >
+              <svg
+                className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Back to website
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

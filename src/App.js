@@ -5,6 +5,9 @@ import PropertyCard from "./components/PropertyCard";
 import { supabase } from "./hooks/useSupabase"; // Add this import
 import Login from "./components/Login";
 import { useAuth } from "./hooks/useAuth";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import PublicView from "./components/PublicView";
+import AgentDashboard from "./components/AgentDashboard";
 
 function App() {
   const { user, loading: authLoading, signOut } = useAuth(); // Use useAuth instead
@@ -27,10 +30,8 @@ function App() {
 
   // Fetch properties when user is authenticated
   useEffect(() => {
-    if (user) {
-      fetchProperties();
-    }
-  }, [user]);
+    fetchProperties();
+  }, []);
 
   const fetchProperties = async () => {
     try {
@@ -403,12 +404,63 @@ function App() {
       </div>
     );
   }
+  return (
+    <Router>
+      <Routes>
+        {/* Public Route - No login required */}
+        <Route path="/" element={
+          <PublicView
+            properties={properties}
+            filteredProperties={filteredProperties}
+            loading={loading}
+            filters={filters}
+            setFilters={setFilters}
+            handleSearch={handleSearch}
+            exportToCSV={exportToCSV}
+          />
+        } />
 
-  if (!user) {
-    // You'll need to create and import the Login component
-    return <Login />;
-  }
+        {/* Login Route */}
+        <Route path="/login" element={
+          user ? <Navigate to="/dashboard" replace /> : <Login />
+        } />
+
+        {/* Agent Dashboard - Protected Route */}
+        <Route path="/dashboard" element={
+          user ? (
+            <AgentDashboard
+              user={user}
+              signOut={signOut}
+              properties={properties}
+              filteredProperties={filteredProperties}
+              loading={loading}
+              filters={filters}
+              setFilters={setFilters}
+              handleSearch={handleSearch}
+              exportToCSV={exportToCSV}
+              handleAddProperty={handleAddProperty}
+              handleUpdateProperty={handleUpdateProperty}
+              handleDeleteProperty={handleDeleteProperty}
+              message={message}
+              getMessageClass={getMessageClass}
+            />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        } />
+
+        {/* Redirect any unknown routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
   
+
+  // if (!user) {
+  //   // You'll need to create and import the Login component
+  //   return <Login />;
+  // }
+
   // Your existing UI but with auth header
   return (
     <div className="min-h-screen bg-gray-900">
@@ -418,12 +470,12 @@ function App() {
           <div className="flex justify-between items-center py-4">
             <div>
               <h1 className="text-2xl font-bold text-white">RC Real Estate</h1>
-              <p className="text-gray-400 text-sm">
+              {/* <p className="text-gray-400 text-sm">
                 Property Management System
-              </p>
+              </p> */}
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* <div className="flex items-center space-x-4">
               <div className="text-right">
                 <p className="text-sm text-gray-300">Welcome back</p>
                 <p className="font-medium">{user.email}</p>
@@ -434,7 +486,7 @@ function App() {
               >
                 Sign Out
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </header>
@@ -453,8 +505,7 @@ function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-8 glass-panel rounded-2xl backdrop-blur-lg border border-white/10 shadow-2xl">
-            {/* Your existing tabs */}
-            <div className="flex bg-white/5 border-b border-white/10 p-3">
+            {/* <div className="flex bg-white/5 border-b border-white/10 p-3">
               <button
                 className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   activeTab === "search"
@@ -486,7 +537,7 @@ function App() {
                   <span className="sm:hidden">Añadir</span>
                 </div>
               </button>
-            </div>
+            </div> */}
 
             <div className="p-8 sm:p-6">
               {activeTab === "add" && (
