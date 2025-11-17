@@ -155,20 +155,18 @@ const AgentDashboard = ({
                     : "No se encontraron propiedades que coincidan con los filtros."}
                 </p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
-                    {
-                        filteredProperties.map((property) => (
-                  <PropertyCard
-                    key={property.id}
-                    property={property}
-                    user={user}
-                    onUpdate={handleUpdateProperty}
-                    onDelete={handleDeleteProperty}
-                  />
-                ))
-                    }
+                <div 
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 max-h-[1000px] overflow-auto pr-[10px]">
+                  {filteredProperties.map((property) => (
+                    <PropertyCard
+                      key={property.id}
+                      property={property}
+                      user={user}
+                      onUpdate={handleUpdateProperty}
+                      onDelete={handleDeleteProperty}
+                    />
+                  ))}
                 </div>
-                
               )}
             </div>
           </div>

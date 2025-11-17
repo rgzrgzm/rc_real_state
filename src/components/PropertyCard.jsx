@@ -138,7 +138,7 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
 
   if (isEditing) {
     return (
-      <div className="card p-4 property-card border-2 border-blue-500/50">
+      <div className="card p-4 property-card border-2 border-gray-500/50">
         {/* Edit Form */}
         <div className="space-y-4">
           {/* Property Name */}
@@ -381,7 +381,7 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
     <div
       className={`card p-4 property-card transition-all duration-300 ${
         user?.id === property.user_id
-          ? "cursor-pointer hover:border-blue-500/50 hover:scale-[1.02]"
+          ? "cursor-pointer hover:border-gray-500/50 hover:scale-[1.02]"
           : ""
       }`}
       onClick={user?.id === property.user_id ? handleEditClick : undefined}

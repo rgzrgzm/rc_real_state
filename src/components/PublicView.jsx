@@ -84,7 +84,7 @@ const PublicView = ({
                     : "No se encontraron propiedades que coincidan con los filtros."}
                 </p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 max-h-[1000px] overflow-auto pr-[10px]">
                   {filteredProperties.map((property) => (
                     <PropertyCardPublic
                       key={property.id}
