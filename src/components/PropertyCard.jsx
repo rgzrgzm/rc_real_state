@@ -77,6 +77,8 @@ const PropertyCard = ({ property, user, onUpdate, onDelete }) => {
           name: img.file.name,
           size: img.file.size,
           type: img.file.type,
+          file: img.file,
+          preview: img.preview,
           // In real app: upload files and store URLs
         })),
       };
