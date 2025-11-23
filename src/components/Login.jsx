@@ -1,29 +1,51 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../hooks/useSupabase";
 
-const Login = () => {
-  const { signIn, signUp, loading } = useAuth();
+const Login = ({ signIn, signUp, loading }) => {
+  // const { signIn, signUp, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
     try {
       if (isSignUp) {
-        const { data } = await signUp(email, password);
+        const { data, error } = await signUp(email, password);
+
+        if (!data) throw error;
+
+        const user = data?.user;
+        if (!user) throw new Error("Signup failed: no user returned");
+
+        await supabase.auth.signOut();
+
+        const { error: pendingError } = await supabase
+          .from("pending_users")
+          .insert([{ user_id: user.id }]);
+
+        if (pendingError) throw pendingError;
+
         if (data.user && !data.session) {
           setMessage("✅ Check your email for verification link!");
         } else {
           setMessage("✅ Account created successfully!");
         }
       } else {
-        await signIn(email, password);
-        setMessage("✅ Successfully signed in!");
+        const { isApproved } = await signIn(email, password);
+        if (isApproved) {
+          setMessage("✅ Successfully signed in!");
+          navigate("/dashboard");
+          return 
+        }
+
+        navigate('/pending')
       }
     } catch (error) {
       setMessage(`❌ Error: ${error.message}`);
