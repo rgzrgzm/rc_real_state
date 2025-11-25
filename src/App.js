@@ -11,6 +11,7 @@ import {
 import PublicView from "./components/PublicView";
 import AgentDashboard from "./components/AgentDashboard";
 import PendingApproval from "./components/PendingApproval";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const [properties, setProperties] = useState([]);
@@ -26,17 +27,18 @@ function App() {
     bathrooms: "",
   });
   const [isApproved, setIsApproved] = useState(null);
-  const { user, loading, signIn, signUp, signOut,isUserApproved } = useAuth(setIsApproved);
-  
-  const authLoading = loading
-  // Load properties once
+  const { user, loading, signIn, signUp, signOut, isUserApproved } =
+    useAuth(setIsApproved);
+
+  const authLoading = loading;
+
   useEffect(() => {
     fetchProperties();
   }, []);
 
   useEffect(() => {
-    isUserApproved(user?.id)
-  }, [user])
+    isUserApproved(user?.id);
+  }, [user]);
 
   const fetchProperties = async () => {
     try {
@@ -85,8 +87,14 @@ function App() {
   // 🔥 Prevent flashing by waiting for auth state
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-        Loading...
+      <div style={{backgroundColor:'#1a1a1a'}} className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white text-lg font-medium">
+            Cargando aplicación...
+          </p>
+          <p className="text-gray-400 mt-2">Por favor espere</p>
+        </div>
       </div>
     );
   }
@@ -114,7 +122,10 @@ function App() {
         <Route path="/pending" element={<PendingApproval />} />
 
         {/* LOGIN */}
-        <Route path="/login" element={<Login signIn={signIn} signUp={signUp} loading={loading} />} />
+        <Route
+          path="/login"
+          element={<Login signIn={signIn} signUp={signUp} loading={loading} />}
+        />
 
         {/* DASHBOARD - ONLY APPROVED USERS */}
         <Route
@@ -122,30 +133,44 @@ function App() {
           element={
             !user ? (
               <Navigate to="/login" replace />
-            ) : isApproved && (
-              <AgentDashboard
-                user={user}
-                signOut={handleLogout}
-                properties={properties}
-                filteredProperties={filteredProperties}
-                loading={loadingProperties}
-                filters={filters}
-                setFilters={setFilters}
-                handleSearch={() => {}}
-                exportToCSV={() => {}}
-                handleAddProperty={() => {}}
-                handleUpdateProperty={() => {}}
-                handleDeleteProperty={() => {}}
-                message={message}
-                getMessageClass={getMessageClass}
-              />
-            ) 
+            ) : (
+              isApproved && (
+                <AgentDashboard
+                  user={user}
+                  signOut={handleLogout}
+                  properties={properties}
+                  filteredProperties={filteredProperties}
+                  loading={loadingProperties}
+                  filters={filters}
+                  setFilters={setFilters}
+                  handleSearch={() => {}}
+                  exportToCSV={() => {}}
+                  handleAddProperty={() => {}}
+                  handleUpdateProperty={() => {}}
+                  handleDeleteProperty={() => {}}
+                  message={message}
+                  getMessageClass={getMessageClass}
+                />
+              )
+            )
           }
         />
 
         {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#1f2937",
+            color: "#fff",
+            border: "1px solid #374151",
+          },
+        }}
+      />
     </Router>
   );
 }

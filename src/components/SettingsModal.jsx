@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../hooks/useSupabase";
+import toast from "react-hot-toast";
 
 const SettingsModal = ({
   isSettingsOpen,
@@ -7,6 +9,79 @@ const SettingsModal = ({
   setSelectedSection,
   user,
 }) => {
+  const [loadingPendingUsers, setLoadingPendingUsers] = useState(false);
+  const [pendingUserList, setPendingUserList] = useState([]);
+
+  useEffect(() => {
+    const fetchPendingUsers = async () => {
+      try {
+        setLoadingPendingUsers(true);
+        const { data, error } = await supabase.functions.invoke(
+          "get-pending-users"
+        );
+
+        if (error) throw error;
+
+        setPendingUserList(data || []);
+      } catch (error) {
+        console.error("Error fetching pending users:", error);
+        toast.error("Error al cargar usuarios pendientes");
+      } finally {
+        setLoadingPendingUsers(false);
+      }
+    };
+
+    if (isSettingsOpen && selectedSection === "approval") {
+      fetchPendingUsers();
+    }
+  }, [isSettingsOpen, selectedSection]);
+
+  const approveUser = async (object) => {
+    try {
+      const userId = object.pending_user.user_id;
+
+      const { data, error } = await supabase
+        .from("white_list")
+        .insert([{ user_id: userId }]);
+
+      if (error) throw error;
+
+      const { data: pendingUserData, error: pendingUserError } = await supabase
+        .from("pending_users")
+        .delete()
+        .eq("user_id", userId); 
+
+      if (pendingUserError) throw pendingUserError;
+
+      setPendingUserList((prev) =>
+        prev.filter((item) => item.pending_user.user_id !== userId)
+      );
+
+      toast.success("Usuario aprobado correctamente");
+    } catch (error) {
+      console.error("Error approving user:", error);
+      toast.error("Error al aprobar usuario: " + error.message);
+    }
+  };
+
+  const rejectUser = async (object) => {
+    try {
+      const userId = object.pending_user.user_id;
+      // Add your reject logic here
+      console.log("Rejecting user:", object);
+
+      // Remove the rejected user from the list
+      setPendingUserList((prev) =>
+        prev.filter((item) => item.pending_user.user_id !== userId)
+      );
+
+      toast.success("Usuario rechazado correctamente");
+    } catch (error) {
+      console.error("Error rejecting user:", error);
+      toast.error("Error al rechazar usuario: " + error.message);
+    }
+  };
+
   return (
     isSettingsOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -16,8 +91,8 @@ const SettingsModal = ({
             <h2 className="text-lg font-bold text-white">Configuración</h2>
             <button
               onClick={() => {
-                setIsSettingsOpen(false)
-                setSelectedSection("account")
+                setIsSettingsOpen(false);
+                setSelectedSection("account");
               }}
               className="text-gray-400 hover:text-white transition-colors"
             >
@@ -188,27 +263,7 @@ const SettingsModal = ({
                         <p className="text-white font-medium">Rol</p>
                         <p className="text-gray-300 text-sm">Agente</p>
                       </div>
-                    </div>  
-                    {/* 
-                    <div className="flex items-center space-x-3">
-                      <svg
-                        className="w-4 h-4 text-gray-400 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <div>
-                        <p className="text-white font-medium">Miembro desde</p>
-                        <p className="text-gray-300 text-sm">Enero 2024</p>
-                      </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               )}
@@ -242,133 +297,105 @@ const SettingsModal = ({
                   </p>
 
                   <div className="space-y-3">
-                    {/* User 1 */}
-                    <div className="bg-gray-700 rounded-lg p-4">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
-                        <div className="flex items-center space-x-3">
-                          <svg
-                            className="w-5 h-5 text-gray-400 flex-shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                          <div>
-                            <p className="text-white font-medium">
-                              usuario1@example.com
-                            </p>
-                            <p className="text-gray-400 text-sm flex items-center space-x-1">
-                              <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                              <span>Pendiente de aprobación</span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2 justify-end">
-                          <button className="flex items-center space-x-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded transition-colors text-sm">
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="hidden xs:inline">Aprobar</span>
-                          </button>
-                          <button className="flex items-center space-x-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded transition-colors text-sm">
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                            <span className="hidden xs:inline">Rechazar</span>
-                          </button>
+                    {loadingPendingUsers ? (
+                      <div className="flex justify-center items-center py-8">
+                        <div className="flex flex-col items-center space-y-3">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                          <p className="text-gray-400 text-sm">
+                            Cargando usuarios...
+                          </p>
                         </div>
                       </div>
-                    </div>
-
-                    {/* User 2 */}
-                    <div className="bg-gray-700 rounded-lg p-4">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
-                        <div className="flex items-center space-x-3">
-                          <svg
-                            className="w-5 h-5 text-gray-400 flex-shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                    ) : pendingUserList.length > 0 ? (
+                      pendingUserList.map((item, index) => {
+                        const userEmail = item.pending_user.user_metadata.email;
+                        return (
+                          <div
+                            key={index}
+                            className="bg-gray-700 rounded-lg p-4"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                          <div>
-                            <p className="text-white font-medium">
-                              usuario2@example.com
-                            </p>
-                            <p className="text-gray-400 text-sm flex items-center space-x-1">
-                              <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                              <span>Pendiente de aprobación</span>
-                            </p>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
+                              <div className="flex items-center space-x-3">
+                                <svg
+                                  className="w-5 h-5 text-gray-400 flex-shrink-0"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                  />
+                                </svg>
+                                <div>
+                                  <p className="text-white font-medium">
+                                    {userEmail}
+                                  </p>
+                                  <p className="text-gray-400 text-sm flex items-center space-x-1">
+                                    <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                                    <span>Pendiente de aprobación</span>
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex space-x-2 justify-end">
+                                <button
+                                  onClick={() => approveUser(item)}
+                                  className="flex items-center space-x-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded transition-colors text-sm"
+                                >
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                  <span className="hidden xs:inline">
+                                    Aprobar
+                                  </span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    rejectUser(item);
+                                  }}
+                                  className="flex items-center space-x-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded transition-colors text-sm"
+                                >
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M6 18L18 6M6 6l12 12"
+                                    />
+                                  </svg>
+                                  <span className="hidden xs:inline">
+                                    Rechazar
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex space-x-2 justify-end">
-                          <button className="flex items-center space-x-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded transition-colors text-sm">
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="hidden xs:inline">Aprobar</span>
-                          </button>
-                          <button className="flex items-center space-x-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded transition-colors text-sm">
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                            <span className="hidden xs:inline">Rechazar</span>
-                          </button>
-                        </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-400">
+                          No hay usuarios pendientes
+                        </p>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}
