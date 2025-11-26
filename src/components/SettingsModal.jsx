@@ -49,7 +49,7 @@ const SettingsModal = ({
       const { data: pendingUserData, error: pendingUserError } = await supabase
         .from("pending_users")
         .delete()
-        .eq("user_id", userId); 
+        .eq("user_id", userId);
 
       if (pendingUserError) throw pendingUserError;
 
@@ -67,10 +67,14 @@ const SettingsModal = ({
   const rejectUser = async (object) => {
     try {
       const userId = object.pending_user.user_id;
-      // Add your reject logic here
-      console.log("Rejecting user:", object);
 
-      // Remove the rejected user from the list
+      const { data: pendingUserData, error: pendingUserError } = await supabase
+        .from("pending_users")
+        .delete()
+        .eq("user_id", userId);
+
+      if (pendingUserError) throw pendingUserError;
+
       setPendingUserList((prev) =>
         prev.filter((item) => item.pending_user.user_id !== userId)
       );
