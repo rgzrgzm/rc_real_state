@@ -17,16 +17,17 @@ const SearchFilters = ({
   };
 
   return (
-    <div>
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-pink-600 mb-4">
-          <span className="text-xl">🔍</span>
+    <div className="animate-fade-in">
+      <div className="text-center mb-8 relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-indigo-500/20 blur-[50px] rounded-full pointer-events-none"></div>
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-600 mb-4 shadow-lg shadow-indigo-500/30 animate-float">
+          <span className="text-2xl">🔍</span>
         </div>
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-pink-500 bg-clip-text text-transparent">
-          Búsqueda Inteligente
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+          Encuentra tu Hogar Ideal
         </h2>
-        <p className="text-gray-400 text-sm mt-2">
-          Filtra propiedades con precisión
+        <p className="text-slate-400 mt-2 font-medium">
+          Explora nuestras propiedades exclusivas
         </p>
       </div>
 
@@ -35,42 +36,45 @@ const SearchFilters = ({
         <div className="group">
           <label
             htmlFor="searchType"
-            className="block text-sm font-semibold text-gray-300 mb-3 group-focus-within:text-indigo-400 transition-colors"
+            className="block text-sm font-semibold text-slate-300 mb-2 group-focus-within:text-indigo-400 transition-colors"
           >
-            📊 Tipo de Transacción
+            Tipo de Transacción
           </label>
-          <select
-            id="searchType"
-            name="type"
-            value={filters.type}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white
-                     focus:bg-white/10 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/20 
-                     transition-all duration-300 backdrop-blur-sm appearance-none"
-          >
-            <option value="" className="bg-gray-800">
-              🌐 Cualquiera
-            </option>
-            <option value="Venta" className="bg-gray-800">
-              🏠 Venta
-            </option>
-            <option value="Renta" className="bg-gray-800">
-              🔑 Renta
-            </option>
-          </select>
+          <div className="relative">
+            <select
+              id="searchType"
+              name="type"
+              value={filters.type}
+              onChange={handleChange}
+              className="w-full px-4 py-3.5 rounded-xl glass-input text-white focus:outline-none appearance-none cursor-pointer"
+            >
+              <option value="" className="bg-slate-900 text-slate-400">
+                Seleccionar tipo...
+              </option>
+              <option value="Venta" className="bg-slate-900">
+                🏠 Venta
+              </option>
+              <option value="Renta" className="bg-slate-900">
+                🔑 Renta
+              </option>
+            </select>
+          </div>
         </div>
 
         {/* Location Search */}
         <div className="group">
           <label
             htmlFor="searchLocation"
-            className="block text-sm font-semibold text-gray-300 mb-3 group-focus-within:text-purple-400 transition-colors"
+            className="block text-sm font-semibold text-slate-300 mb-2 group-focus-within:text-pink-400 transition-colors"
           >
-            📍 Ubicación/Modelo
+            Ubicación o Modelo
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500">🔎</span>
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
             </div>
             <input
               type="text"
@@ -79,154 +83,139 @@ const SearchFilters = ({
               value={filters.location}
               onChange={handleChange}
               placeholder="Ej: Lussela, Perlino o Anáhuac"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 
-                       focus:bg-white/10 focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/20 
-                       transition-all duration-300 backdrop-blur-sm"
+              className="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input placeholder-slate-500 focus:outline-none"
             />
           </div>
         </div>
 
         {/* Price Range */}
-        <div className="space-y-4">
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
-            💰 Rango de Precio
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-slate-300">
+            Rango de Precio
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="group">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
                   $
                 </span>
                 <input
                   type="number"
-                  id="searchMinPrice"
                   name="minPrice"
                   value={filters.minPrice}
                   onChange={handleChange}
-                  placeholder="0"
-                  className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 
-                           focus:bg-white/10 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/20 
-                           transition-all duration-300 backdrop-blur-sm"
+                  placeholder="Mínimo"
+                  className="w-full pl-8 pr-4 py-3.5 rounded-xl glass-input placeholder-slate-500 focus:outline-none"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1 text-center">Mínimo</p>
             </div>
             <div className="group">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
                   $
                 </span>
                 <input
                   type="number"
-                  id="searchMaxPrice"
                   name="maxPrice"
                   value={filters.maxPrice}
                   onChange={handleChange}
-                  placeholder="Máx"
-                  className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 
-                           focus:bg-white/10 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/20 
-                           transition-all duration-300 backdrop-blur-sm"
+                  placeholder="Máximo"
+                  className="w-full pl-8 pr-4 py-3.5 rounded-xl glass-input placeholder-slate-500 focus:outline-none"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1 text-center">Máximo</p>
             </div>
           </div>
         </div>
 
         {/* Bedrooms and Bathrooms */}
-        <div className="space-y-4">
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
-            🏠 Características
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-slate-300">
+            Características (Mínimo)
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="group">
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <span className="text-lg">🛏️</span>
+                </div>
                 <input
                   type="number"
-                  id="searchBedrooms"
                   name="bedrooms"
                   value={filters.bedrooms}
                   onChange={handleChange}
-                  step="0.5"
-                  placeholder="0"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 
-                           focus:bg-white/10 focus:border-pink-500/50 focus:ring-4 focus:ring-pink-500/20 
-                           transition-all duration-300 backdrop-blur-sm"
+                  placeholder="Recámaras"
+                  className="w-full pl-10 pr-4 py-3.5 rounded-xl glass-input placeholder-slate-500 focus:outline-none"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1 text-center flex items-center justify-center">
-                <span className="mr-1">🛌</span> Recámaras (Mín.)
-              </p>
             </div>
             <div className="group">
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <span className="text-lg">�</span>
+                </div>
                 <input
                   type="number"
-                  id="searchBathrooms"
                   name="bathrooms"
                   value={filters.bathrooms}
                   onChange={handleChange}
-                  step="0.5"
-                  placeholder="0"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 
-                           focus:bg-white/10 focus:border-pink-500/50 focus:ring-4 focus:ring-pink-500/20 
-                           transition-all duration-300 backdrop-blur-sm"
+                  placeholder="Baños"
+                  className="w-full pl-10 pr-4 py-3.5 rounded-xl glass-input placeholder-slate-500 focus:outline-none"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1 text-center flex items-center justify-center">
-                <span className="mr-1">🚽</span> Baños (Mín.)
-              </p>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-4 pt-4">
+        <div className="space-y-3 pt-6">
           <button
             onClick={onSearch}
-            className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 
-                     hover:from-indigo-500 hover:to-purple-500 active:scale-95
-                     text-white font-bold text-lg shadow-lg hover:shadow-indigo-500/25
-                     transition-all duration-300 transform hover:scale-[1.02] group relative overflow-hidden"
+            className="w-full py-4 px-6 rounded-xl btn-gradient-primary text-white font-bold text-lg 
+                     shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transform hover:-translate-y-0.5 active:translate-y-0 
+                     transition-all duration-200 flex items-center justify-center gap-2 group relative overflow-hidden"
           >
-            <span className="relative z-10 flex items-center justify-center">
-              <span className="mr-2">⚡</span>
-              Buscar Propiedades
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            <span className="relative">Buscar Propiedades</span>
+            <svg className="w-5 h-5 relative group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </button>
 
           {isLogged && (
             <button
               onClick={onExport}
-              className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 
-                     hover:from-emerald-500 hover:to-cyan-500 active:scale-95
-                     text-white font-bold text-lg shadow-lg hover:shadow-emerald-500/25
-                     transition-all duration-300 transform hover:scale-[1.02] group relative overflow-hidden"
+              className="w-full py-3.5 px-6 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 
+                       text-slate-300 font-semibold shadow-lg hover:text-white transition-all duration-200 
+                       flex items-center justify-center gap-2"
             >
-              <span className="relative z-10 flex items-center justify-center">
-                <span className="mr-2">📊</span>
-                Exportar a Excel
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Exportar a Excel
             </button>
           )}
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-6 pt-6 border-t border-white/10">
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div className="p-3 rounded-lg bg-white/5 backdrop-blur-sm stats-card">
-              <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+        <div className="border-t border-white/10 pt-6">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="relative group p-4 rounded-2xl bg-slate-800/50 border border-white/5 hover:bg-slate-800 transition-colors cursor-default">
+              <div className="text-3xl font-bold text-white mb-1 group-hover:scale-110 transition-transform origin-left">
                 {properties.length}
               </div>
-              <div className="text-xs text-gray-400 mt-1">Total</div>
+              <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total</div>
+              <div className="absolute right-3 top-3 w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                📁
+              </div>
             </div>
-            <div className="p-3 rounded-lg bg-white/5 backdrop-blur-sm stats-card">
-              <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className="relative group p-4 rounded-2xl bg-slate-800/50 border border-white/5 hover:bg-slate-800 transition-colors cursor-default">
+              <div className="text-3xl font-bold text-pink-500 mb-1 group-hover:scale-110 transition-transform origin-left">
                 {filteredProperties.length}
               </div>
-              <div className="text-xs text-gray-400 mt-1">Filtradas</div>
+              <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Resultados</div>
+              <div className="absolute right-3 top-3 w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400">
+                🎯
+              </div>
             </div>
           </div>
         </div>

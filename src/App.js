@@ -11,6 +11,7 @@ import {
 import PublicView from "./components/PublicView";
 import AgentDashboard from "./components/AgentDashboard";
 import PendingApproval from "./components/PendingApproval";
+import LandingPage from "./components/LandingPage"; // Import LandingPage
 import { Toaster } from "react-hot-toast";
 
 const Loader = ({ primartyText, secondaryText }) => {
@@ -459,9 +460,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* PUBLIC VIEW */}
+        {/* LANDING PAGE (New Home) */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* PUBLIC CATALOG VIEW (Moved from /) */}
         <Route
-          path="/"
+          path="/catalog"
           element={
             <PublicView
               properties={properties}
@@ -481,7 +485,9 @@ function App() {
         {/* LOGIN */}
         <Route
           path="/login"
-          element={<Login signIn={signIn} signUp={signUp} loading={loading} />}
+          element={
+            <Login signIn={signIn} signUp={signUp} loading={loading} />
+          }
         />
 
         {/* DASHBOARD - ONLY APPROVED USERS */}
